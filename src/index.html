@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="lightmode.css" />
+    <link rel="stylesheet" href="darkmode.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wane chatbot</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tauri-apps/api@2.0.0-alpha/dist/index.min.js"></script>
+    <script src="./bundle.js"></script>
+    
+    <link rel="icon" href="./assets/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="./assets/logo.png">
+  </head>
+
+  <body>
+    <div class="home-container" id="homeContainer">
+      <header class="home-header">
+        <div class="home-title">
+          <h1>Wane</h1>
+          <p class="subtitle">Your personal AI companion</p>
+        </div>
+        <div class="home-controls">
+          <button id="homeAddPersonality" class="home-add-button">Create New Bot</button>
+          <div class="home-nav-buttons">
+            <button class="nav-button" id="userButtonHome">
+              <img src="./assets/user-circle.svg" alt="User Profile" />
+            </button>
+            <button class="nav-button" id="settingsButtonHome">
+              <img src="./assets/settings.svg" alt="Settings" />
+            </button>
+            <button class="theme-toggle home-theme-toggle" id="homeThemeToggle">🌙</button>
+          </div>
+        </div>
+      </header>
+      
+      <div class="personalities-grid" id="personalitiesGrid">
+
+      </div>
+    </div>
+
+    <div class="main-wrapper hidden" id="mainWrapper">
+      <div class="nav-buttons">
+        <button class="nav-button" id="userButton">
+          <img src="./assets/user-circle.svg" alt="User Profile" />
+        </button>
+        <button class="nav-button" id="settingsButton">
+          <img src="./assets/settings.svg" alt="Settings" />
+        </button>
+      </div>
+      <main class="container">
+        <div class="header">
+          <div class="title-container">
+            <button class="nav-button back-button" id="backToHome">
+              <img src="./assets/arrow-big-left.svg" alt="Back to Home" />
+            </button>
+            <h1 class="title">Wane</h1>
+          </div>
+          <div class="header-controls">
+            <span class="model-label">Claude-3 Haiku</span>
+            <select title="personality" id="modelSelect" class="model-select">
+            </select>
+            <button id="clearChat" class="clear-button" onclick="window.clearChat(false)">
+              🗑️ Clear
+            </button>
+            <button class="theme-toggle" id="themeToggle">
+              🌙
+            </button>
+          </div>
+        </div>
+
+        <div class="chat">
+          <div class="bot-message">
+            <p id="introduction">Hi! How can I help you today?</p>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <textarea class="chatbox" id="chatbox" placeholder="Type a message..."></textarea>
+          <button onclick="window.sendMessage()" class="send">Send</button>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error || e.message);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+      });
+    </script>
+    <script>
+      window.addEventListener('load', function() {
+        if (document.getElementById('personalitiesGrid') && 
+            document.getElementById('personalitiesGrid').children.length === 0) {
+          const event = new Event('personalities-init');
+          document.dispatchEvent(event);
+        }
+      });
+    </script>
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const grid = document.getElementById('personalitiesGrid');
+          if (grid && grid.children.length === 0) {
+            console.log("No personality cards found, forcing reload...");
+            
+            try {
+              if (localStorage.getItem('wane_personalities') === '{}' || 
+                  localStorage.getItem('wane_personalities') === 'null') {
+                localStorage.removeItem('wane_personalities');
+              }
+              
+              import('./personalities/storage/personalityStorage.js')
+                .then(module => {
+                  module.migratePersonalityStorage();
+                  import('./personalities/personalityManager.js')
+                    .then(manager => manager.renderPersonalityCards());
+                });
+            } catch (e) {
+              console.error("Fallback initialization error:", e);
+            }
+          }
+        }, 500);
+      });
+    </script>
+    <script>
+      if (!localStorage.getItem('app_initialized')) {
+        localStorage.clear();
+        localStorage.setItem('app_initialized', 'true');
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "wane",
+  "version": "1.0.0",
+  "identifier": "com.wane.app",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeBuildCommand": "webpack",
+    "beforeDevCommand": "webpack --watch"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "wane",
+        "width": 1200,
+        "height": 800
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/logo.png",
+      "icons/logo.ico"
+    ],
+    "resources": [
+      "assets/*"
+    ]
+  }
+}
