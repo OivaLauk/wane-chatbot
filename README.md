@@ -46,7 +46,7 @@ I have only provided installation instructions for Windows using npm. If you wis
 1. Make sure you have done all of the steps in the installation and usage section.
 2. cd into your project directory.
 3. Run `npm run clean-build` in your terminal.
-4. Locate the executable, the terminal will tell you where it was compiled after finishing but it should be in the `src-tauri/target/x86_64-pc-windows-msvc/release` folder.
+4. Locate the executable, the terminal will tell you where it was compiled after finishing.
 
 ## License
 MIT License
